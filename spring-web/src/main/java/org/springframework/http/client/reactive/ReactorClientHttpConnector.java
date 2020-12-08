@@ -76,6 +76,7 @@ public class ReactorClientHttpConnector implements ClientHttpConnector {
 		this.httpClient = defaultInitializer.andThen(mapper).apply(initHttpClient(factory));
 	}
 
+	@SuppressWarnings("deprecation")
 	private static HttpClient initHttpClient(ReactorResourceFactory resourceFactory) {
 		ConnectionProvider provider = resourceFactory.getConnectionProvider();
 		LoopResources resources = resourceFactory.getLoopResources();

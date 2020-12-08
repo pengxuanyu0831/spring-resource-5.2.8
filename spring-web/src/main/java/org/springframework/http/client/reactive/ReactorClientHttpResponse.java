@@ -52,6 +52,8 @@ class ReactorClientHttpResponse implements ClientHttpResponse {
 
 	private final HttpClientResponse response;
 
+	private final HttpHeaders headers;
+
 	private final NettyInbound inbound;
 
 	private final NettyDataBufferFactory bufferFactory;
@@ -69,6 +71,8 @@ class ReactorClientHttpResponse implements ClientHttpResponse {
 	 */
 	public ReactorClientHttpResponse(HttpClientResponse response, Connection connection) {
 		this.response = response;
+		MultiValueMap<String, String> adapter = new NettyHeadersAdapter(response.responseHeaders());
+		this.headers = HttpHeaders.readOnlyHttpHeaders(adapter);
 		this.inbound = connection.inbound();
 		this.bufferFactory = new NettyDataBufferFactory(connection.outbound().alloc());
 		this.logPrefix = (logger.isDebugEnabled() ? "[" + connection.channel().id().asShortText() + "] " : "");
@@ -81,6 +85,8 @@ class ReactorClientHttpResponse implements ClientHttpResponse {
 	@Deprecated
 	public ReactorClientHttpResponse(HttpClientResponse response, NettyInbound inbound, ByteBufAllocator alloc) {
 		this.response = response;
+		MultiValueMap<String, String> adapter = new NettyHeadersAdapter(response.responseHeaders());
+		this.headers = HttpHeaders.readOnlyHttpHeaders(adapter);
 		this.inbound = inbound;
 		this.bufferFactory = new NettyDataBufferFactory(alloc);
 		this.logPrefix = "";
@@ -107,9 +113,7 @@ class ReactorClientHttpResponse implements ClientHttpResponse {
 
 	@Override
 	public HttpHeaders getHeaders() {
-		HttpHeaders headers = new HttpHeaders();
-		this.response.responseHeaders().entries().forEach(e -> headers.add(e.getKey(), e.getValue()));
-		return headers;
+		return this.headers;
 	}
 
 	@Override
