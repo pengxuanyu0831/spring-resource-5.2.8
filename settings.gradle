@@ -43,8 +43,6 @@ rootProject.children.each {project ->
 	project.buildFileName = "${project.name}.gradle"
 }
 
-<<<<<<< HEAD
-=======
 settings.gradle.projectsLoaded {
 	gradleEnterprise {
 		buildScan {
@@ -65,4 +63,4 @@ settings.gradle.projectsLoaded {
 		}
 	}
 }
->>>>>>> 762cf0ffe862fcfd52933657d494d9cb2c0757da
+
