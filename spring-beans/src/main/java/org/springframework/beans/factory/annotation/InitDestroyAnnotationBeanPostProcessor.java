@@ -230,7 +230,9 @@ public class InitDestroyAnnotationBeanPostProcessor
 			final List<LifecycleElement> currDestroyMethods = new ArrayList<>();
 
 			ReflectionUtils.doWithLocalMethods(targetClass, method -> {
+				// 判断有没有@PostConstr
 				if (this.initAnnotationType != null && method.isAnnotationPresent(this.initAnnotationType)) {
+					// 有就包装成一个Life对象
 					LifecycleElement element = new LifecycleElement(method);
 					currInitMethods.add(element);
 					if (logger.isTraceEnabled()) {

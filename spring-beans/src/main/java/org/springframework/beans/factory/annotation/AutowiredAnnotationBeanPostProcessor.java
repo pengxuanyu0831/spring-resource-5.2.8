@@ -243,6 +243,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 
 	@Override
 	public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
+		// 收集@Autowired 注解
 		InjectionMetadata metadata = findAutowiringMetadata(beanName, beanType, null);
 		metadata.checkConfigMembers(beanDefinition);
 	}
@@ -394,6 +395,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 
 	@Override
 	public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) {
+		// 这就是在收集 @Autowired 过程中找到带有注解的对象，然后缓存的容器
 		InjectionMetadata metadata = findAutowiringMetadata(beanName, bean.getClass(), pvs);
 		try {
 			metadata.inject(bean, beanName, pvs);
@@ -471,6 +473,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 			final List<InjectionMetadata.InjectedElement> currElements = new ArrayList<>();
 
 			ReflectionUtils.doWithLocalFields(targetClass, field -> {
+				// 找有@Autowired注解的属性，丢到map里
 				MergedAnnotation<?> ann = findAutowiredAnnotation(field);
 				if (ann != null) {
 					if (Modifier.isStatic(field.getModifiers())) {
@@ -628,6 +631,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 			Field field = (Field) this.member;
 			Object value;
 			if (this.cached) {
+				// 根据beanName拿到value值
 				value = resolvedCachedArgument(beanName, this.cachedFieldValue);
 			}
 			else {
@@ -637,6 +641,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 				Assert.state(beanFactory != null, "No BeanFactory available");
 				TypeConverter typeConverter = beanFactory.getTypeConverter();
 				try {
+					// 触发getBean，这里拿到value值
 					value = beanFactory.resolveDependency(desc, beanName, autowiredBeanNames, typeConverter);
 				}
 				catch (BeansException ex) {
@@ -663,6 +668,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 					}
 				}
 			}
+			// 反射：拿到value了，又有bean 通过反射把value注入到bean中
 			if (value != null) {
 				ReflectionUtils.makeAccessible(field);
 				field.set(bean, value);

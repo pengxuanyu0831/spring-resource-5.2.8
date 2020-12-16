@@ -288,10 +288,16 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 		}
 	}
 
-
+	/*
+	1 扫描类里面的属性和方法
+	2 判断是否有这三种注解
+	3 有注解的属性或者方法，包装成一个类
+	 */
 	@Override
 	public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
+		// 扫描 @PostConstruct @PreDestory注解
 		super.postProcessMergedBeanDefinition(beanDefinition, beanType, beanName);
+		// 找@Resource注解
 		InjectionMetadata metadata = findResourceMetadata(beanName, beanType, null);
 		metadata.checkConfigMembers(beanDefinition);
 	}
@@ -336,6 +342,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 		// Fall back to class name as cache key, for backwards compatibility with custom callers.
 		String cacheKey = (StringUtils.hasLength(beanName) ? beanName : clazz.getName());
 		// Quick check on the concurrent map first, with minimal locking.
+		// 都是先从缓存里找
 		InjectionMetadata metadata = this.injectionMetadataCache.get(cacheKey);
 		if (InjectionMetadata.needsRefresh(metadata, clazz)) {
 			synchronized (this.injectionMetadataCache) {
@@ -344,6 +351,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 					if (metadata != null) {
 						metadata.clear(pvs);
 					}
+					// 没有就创建一个ResourceMetadata
 					metadata = buildResourceMetadata(clazz);
 					this.injectionMetadataCache.put(cacheKey, metadata);
 				}
@@ -429,6 +437,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 			});
 
 			elements.addAll(0, currElements);
+			// 找父类是否有这个注解
 			targetClass = targetClass.getSuperclass();
 		}
 		while (targetClass != null && targetClass != Object.class);
