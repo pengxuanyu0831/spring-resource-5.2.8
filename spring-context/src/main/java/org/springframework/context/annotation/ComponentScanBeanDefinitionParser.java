@@ -86,7 +86,10 @@ public class ComponentScanBeanDefinitionParser implements BeanDefinitionParser {
 				ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
 
 		// Actually scan for bean definitions and register them.
+		// 这里定义了一个扫描器，扫描.class 文件
 		ClassPathBeanDefinitionScanner scanner = configureScanner(parserContext, element);
+		// doScan 这里去解析注释
+		// 开始扫描，扫到的beanDefintions信息，将符合规则的bean转化为beanDefinition
 		Set<BeanDefinitionHolder> beanDefinitions = scanner.doScan(basePackages);
 		registerComponents(parserContext.getReaderContext(), beanDefinitions, element);
 
@@ -149,6 +152,12 @@ public class ComponentScanBeanDefinitionParser implements BeanDefinitionParser {
 		}
 		if (annotationConfig) {
 			Set<BeanDefinitionHolder> processorDefinitions =
+					/**
+					 * 注册注解处理器, 但是这里还没有开始处理注解, 要想使用注解处理器，必须要实例化注解处理器，那么其实例化是在哪里进行的呢，
+					 * 这里还需要回到org.springframework.context.support.AbstractApplicationContext.java中的refresh()函数
+					 * 对注解处理器 AutowiredAnnotationBeanPostProcessor 的实例化是在 registerBeanPostProcessors(beanFactory); 方法
+					 * 因为它继承自 BeanPostProcessor，此类型的 bean 在 registerBeanPostProcessors 被实例化
+					 */
 					AnnotationConfigUtils.registerAnnotationConfigProcessors(readerContext.getRegistry(), source);
 			for (BeanDefinitionHolder processorDefinition : processorDefinitions) {
 				compositeDef.addNestedComponent(new BeanComponentDefinition(processorDefinition));

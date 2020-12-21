@@ -1390,6 +1390,7 @@ public class BeanDefinitionParserDelegate {
 			error("Unable to locate Spring NamespaceHandler for XML schema namespace [" + namespaceUri + "]", ele);
 			return null;
 		}
+		// parse在这里调用
 		return handler.parse(ele, new ParserContext(this.readerContext, this, containingBd));
 	}
 

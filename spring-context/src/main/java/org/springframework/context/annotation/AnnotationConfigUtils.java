@@ -147,7 +147,7 @@ public abstract class AnnotationConfigUtils {
 	 */
 	public static Set<BeanDefinitionHolder> registerAnnotationConfigProcessors(
 			BeanDefinitionRegistry registry, @Nullable Object source) {
-
+		// 获取 DefaultListableBeanFactory（这是个map 看Notion笔记）
 		DefaultListableBeanFactory beanFactory = unwrapDefaultListableBeanFactory(registry);
 		if (beanFactory != null) {
 			if (!(beanFactory.getDependencyComparator() instanceof AnnotationAwareOrderComparator)) {
@@ -165,13 +165,28 @@ public abstract class AnnotationConfigUtils {
 			def.setSource(source);
 			beanDefs.add(registerPostProcessor(registry, def, CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME));
 		}
-
+		/**
+		 * 注册用于处理 @Autowired 注解的处理器 AutowiredAnnotationBeanPostProcessor
+		 * 全限定类名：org.springframework.context.annotation.internalAutowiredAnnotationProcessor
+		 * 目前此类还没有被创建
+		 *
+		 * AutowiredAnnotationBeanPostProcessor 会：
+		 * 扫描方法和属性上是否有@Autowired @Value注解
+		 * 注意，@Autowired @Value 是 Spring 的注解
+		 */
 		if (!registry.containsBeanDefinition(AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(AutowiredAnnotationBeanPostProcessor.class);
 			def.setSource(source);
 			beanDefs.add(registerPostProcessor(registry, def, AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME));
 		}
-
+		/**
+		 * 注册用于处理 @Required 属性的注解处理器
+		 *
+		 * CommonAnnotationBeanPostProcessor 会：
+		 * 扫描方法上是否有@PostConstruct @PreDestroy注解
+		 * 扫描方法和属性上是否有@Resource注解
+		 * 注意，@Resource @PostConstruct @PreDestroy 是 JDK 的注解
+		 */
 		// Check for JSR-250 support, and if present add the CommonAnnotationBeanPostProcessor.
 		if (jsr250Present && !registry.containsBeanDefinition(COMMON_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(CommonAnnotationBeanPostProcessor.class);

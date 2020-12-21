@@ -471,7 +471,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 
 		do {
 			final List<InjectionMetadata.InjectedElement> currElements = new ArrayList<>();
-
+			// 反射工具类
 			ReflectionUtils.doWithLocalFields(targetClass, field -> {
 				// 找有@Autowired注解的属性，丢到map里
 				MergedAnnotation<?> ann = findAutowiredAnnotation(field);
@@ -483,10 +483,11 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 						return;
 					}
 					boolean required = determineRequiredStatus(ann);
+					// 把注解属性值 required 和 field属性进行包装
 					currElements.add(new AutowiredFieldElement(field, required));
 				}
 			});
-
+			// @Autowired 打在方法上了
 			ReflectionUtils.doWithLocalMethods(targetClass, method -> {
 				Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
 				if (!BridgeMethodResolver.isVisibilityBridgeMethodPair(method, bridgedMethod)) {

@@ -569,6 +569,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 		if (instanceWrapper == null) {
 			// 依据普通的参数进行bean创建实例
+			// 堆内存划分了空间，但是空间里的属性是空的
 			instanceWrapper = createBeanInstance(beanName, mbd, args);
 		}
 		// 将beanDefintion 转换为beanWrapped
@@ -582,7 +583,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		synchronized (mbd.postProcessingLock) {
 			if (!mbd.postProcessed) {
 				try {
-					// BeanPostProcessors接口的典型应用  重点 注解的收集过程
+					// BeanPostProcessors接口的典型应用  重点 !!!注解的收集过程!!!
+					// AutowiredAnntationBeanPostProcess 支持解析@Autowired @Value注解
+					// CommonAnntationBeanPostProcess 收集@Resource @PreDestory @PostConstruce注解
+					// 典型的 PostPrpcess 接口的应用
 					applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
 				}
 				catch (Throwable ex) {
@@ -1103,7 +1107,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @see MergedBeanDefinitionPostProcessor#postProcessMergedBeanDefinition
 	 */
 	protected void applyMergedBeanDefinitionPostProcessors(RootBeanDefinition mbd, Class<?> beanType, String beanName) {
-		// 拿到Bean所有的BeanPostProcessor接口
+		// 从BeanFactory 拿到Bean所有的BeanPostProcessor类型的实例
 		for (MergedBeanDefinitionPostProcessor processor : getBeanPostProcessorCache().mergedDefinition) {
 			processor.postProcessMergedBeanDefinition(mbd, beanType, beanName);
 		}
