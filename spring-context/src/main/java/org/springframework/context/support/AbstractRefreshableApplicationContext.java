@@ -124,6 +124,10 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 			closeBeanFactory();
 		}
 		try {
+			/**
+			 * 创建 DefaultListableBeanFactory 类型的 BeanFactory，目前还没有任何属性
+			 * 这个类超级强大，所有关于容器的接口、抽象类它都继承了
+			 */
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
 			beanFactory.setSerializationId(getId());
 			customizeBeanFactory(beanFactory);

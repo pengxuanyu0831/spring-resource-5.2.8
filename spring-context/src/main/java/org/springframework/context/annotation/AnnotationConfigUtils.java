@@ -169,7 +169,6 @@ public abstract class AnnotationConfigUtils {
 		 * 注册用于处理 @Autowired 注解的处理器 AutowiredAnnotationBeanPostProcessor
 		 * 全限定类名：org.springframework.context.annotation.internalAutowiredAnnotationProcessor
 		 * 目前此类还没有被创建
-		 *
 		 * AutowiredAnnotationBeanPostProcessor 会：
 		 * 扫描方法和属性上是否有@Autowired @Value注解
 		 * 注意，@Autowired @Value 是 Spring 的注解

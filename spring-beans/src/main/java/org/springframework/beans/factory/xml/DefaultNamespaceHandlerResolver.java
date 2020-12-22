@@ -135,6 +135,10 @@ public class DefaultNamespaceHandlerResolver implements NamespaceHandlerResolver
 				}
 				// 实例化对象
 				NamespaceHandler namespaceHandler = (NamespaceHandler) BeanUtils.instantiateClass(handlerClass);
+				// 这里只是实例化了这个方法，并且加入了这个 parser，但是并没有开始调用。
+				// 那么什么时候调用的 parse 呢？我们看回上一步 BeanDefinitionParserDelegate.parseCustomElement 方法，最后一步，
+				// handler.parse(ele, new ParserContext(this.readerContext, this, containingBd))
+				// 调用 NamespaceHandlerSupport.parse
 				namespaceHandler.init();
 				// 熟悉而又关键的map
 				handlerMappings.put(namespaceUri, namespaceHandler);
