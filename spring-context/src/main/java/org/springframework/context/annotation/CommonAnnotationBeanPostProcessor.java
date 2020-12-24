@@ -420,6 +420,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 						PropertyDescriptor pd = BeanUtils.findPropertyForMethod(bridgedMethod, clazz);
 						currElements.add(new EjbRefElement(method, bridgedMethod, pd));
 					}
+					// 判断是不是有Resource注解
 					else if (bridgedMethod.isAnnotationPresent(Resource.class)) {
 						if (Modifier.isStatic(method.getModifiers())) {
 							throw new IllegalStateException("@Resource annotation is not supported on static methods");
@@ -441,7 +442,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 			targetClass = targetClass.getSuperclass();
 		}
 		while (targetClass != null && targetClass != Object.class);
-
+		// 都是InjectionMetadata 对象
 		return InjectionMetadata.forElements(elements, clazz);
 	}
 
