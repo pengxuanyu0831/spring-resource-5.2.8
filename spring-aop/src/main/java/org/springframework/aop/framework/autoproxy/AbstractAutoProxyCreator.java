@@ -328,9 +328,12 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		}
 
 		// Create proxy if we have advice.
+		// 创建当前bean的代理
 		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
 		if (specificInterceptors != DO_NOT_PROXY) {
+			// 如果有切面，则生成该bean的代理
 			this.advisedBeans.put(cacheKey, Boolean.TRUE);
+			// 把代理的对象bean的实例封装到SingletonTargetSource对象中
 			Object proxy = createProxy(
 					bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
 			this.proxyTypes.put(cacheKey, proxy.getClass());

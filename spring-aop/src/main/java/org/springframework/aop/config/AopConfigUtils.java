@@ -131,11 +131,12 @@ public abstract class AopConfigUtils {
 			}
 			return null;
 		}
-
+		// 把AOP入口类封装成为一个beanDefinition对象
 		RootBeanDefinition beanDefinition = new RootBeanDefinition(cls);
 		beanDefinition.setSource(source);
 		beanDefinition.getPropertyValues().add("order", Ordered.HIGHEST_PRECEDENCE);
 		beanDefinition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
+		// 注解AOP入口类的beanName
 		registry.registerBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME, beanDefinition);
 		return beanDefinition;
 	}
