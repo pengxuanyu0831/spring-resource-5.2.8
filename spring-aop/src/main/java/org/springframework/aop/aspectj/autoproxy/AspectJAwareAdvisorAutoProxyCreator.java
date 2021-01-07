@@ -81,6 +81,7 @@ public class AspectJAwareAdvisorAutoProxyCreator extends AbstractAdvisorAutoProx
 			return result;
 		}
 		else {
+			// 对有@Order注解的类进行排序
 			return super.sortAdvisors(advisors);
 		}
 	}

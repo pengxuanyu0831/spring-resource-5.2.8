@@ -335,6 +335,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 			this.advisedBeans.put(cacheKey, Boolean.TRUE);
 			// 把代理的对象bean的实例封装到SingletonTargetSource对象中
 			Object proxy = createProxy(
+					// SingletonTargetSource implement TargetSource ，这个TargetSource接口是用于封装被代理对象的
 					bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
 			this.proxyTypes.put(cacheKey, proxy.getClass());
 			return proxy;
@@ -432,7 +433,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		if (this.beanFactory instanceof ConfigurableListableBeanFactory) {
 			AutoProxyUtils.exposeTargetClass((ConfigurableListableBeanFactory) this.beanFactory, beanName, beanClass);
 		}
-
+		// 创建代理工厂 工厂模式
 		ProxyFactory proxyFactory = new ProxyFactory();
 		proxyFactory.copyFrom(this);
 
@@ -519,6 +520,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 
 		Advisor[] advisors = new Advisor[allInterceptors.size()];
 		for (int i = 0; i < allInterceptors.size(); i++) {
+			// 对自定义的advice进行包装，把advice 包装成advisor对象，切面对象
 			advisors[i] = this.advisorAdapterRegistry.wrap(allInterceptors.get(i));
 		}
 		return advisors;
